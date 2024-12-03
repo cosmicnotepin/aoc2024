@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::error::Error;
 use std::fs;
 use std::iter::zip;
@@ -8,10 +9,10 @@ fn safe(report: &str) -> bool {
         .map(|x| x.parse::<i32>().unwrap())
         .collect();
     let increasing = levels[1] > levels[0];
-    for w in levels.windows(2) {
+    for (n1, n2) in levels.iter().tuple_windows() {
         //zip(&levels[..(levels.len() - 1)], &levels[1..]) {
-        let diff = (w[1] - w[0]).abs();
-        if (w[1] > w[0]) != increasing || (diff > 3 || diff == 0) {
+        let diff = (n2 - n1).abs();
+        if (n2 > n1) != increasing || (diff > 3 || diff == 0) {
             return false;
         }
     }

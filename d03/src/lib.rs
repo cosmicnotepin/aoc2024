@@ -14,12 +14,12 @@ fn part1(input: String) -> i32 {
         .sum()
 }
 
-fn part2(mut input: String) -> i32 {
+fn part2(input: String) -> i32 {
     let re = Regex::new(r"(?s)don't\(\).*?do\(\)").unwrap();
-    while let Some(m) = re.find(&input) {
-        input.replace_range(m.range(), "");
-    }
-    return part1(input);
+    //while let Some(m) = re.find(&input) {
+    //    input.replace_range(m.range(), "");
+    //}
+    return part1(re.replace_all(&input, "").to_string());
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {

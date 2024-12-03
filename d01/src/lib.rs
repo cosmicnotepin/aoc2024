@@ -1,25 +1,22 @@
+use itertools::Itertools;
 use std::error::Error;
 use std::fs;
 use std::iter::zip;
 
 fn part1(input: String) -> i32 {
-    let mut l1: Vec<i32> = Vec::new();
-    let mut l2: Vec<i32> = Vec::new();
-    for line in input.lines() {
-        match line.split("   ").collect::<Vec<&str>>()[..] {
-            [n1, n2] => {
-                l1.push(n1.parse().expect("in aoc we trust"));
-                l2.push(n2.parse().expect("in aoc we trust"));
-            }
-            _ => panic!("unexpected file format"),
-        }
-    }
+    let (mut l1, mut l2): (Vec<_>, Vec<_>) = input
+        .lines()
+        .map(|line| {
+            line.split("   ")
+                .map(|s| s.parse::<i32>().unwrap())
+                .collect_tuple()
+                .unwrap()
+        })
+        .unzip();
+
     l1.sort();
     l2.sort();
-    let mut res = 0;
-    for (n1, n2) in zip(l1, l2) {
-        res += (n1 - n2).abs();
-    }
+    let res = zip(l1, l2).map(|(n1, n2)| (n1 - n2).abs()).sum();
     return res;
 }
 
@@ -27,19 +24,13 @@ fn part2(input: String) -> i32 {
     let mut l1: Vec<i32> = Vec::new();
     let mut l2: Vec<i32> = Vec::new();
     for line in input.lines() {
-        match line.split("   ").collect::<Vec<&str>>()[..] {
-            [n1, n2] => {
-                l1.push(n1.parse().expect("in aoc we trust"));
-                l2.push(n2.parse().expect("in aoc we trust"));
-            }
-            _ => panic!("unexpected file format"),
+        if let [n1, n2] = line.split("   ").collect::<Vec<&str>>()[..] {
+            l1.push(n1.parse().expect("in aoc we trust"));
+            l2.push(n2.parse().expect("in aoc we trust"));
         }
     }
-    let mut res: i32 = 0;
-    for n1 in l1 {
-        let l2_count = l2.iter().filter(|&&n2| n2 == n1).count();
-        res += n1 * <usize as TryInto<i32>>::try_into(l2_count).unwrap()
-    }
+    let l2_count = |&n1| l2.iter().filter(|&&n2| n2 == n1).count() as i32;
+    let res = l1.iter().map(|n1| n1 * l2_count(n1)).sum();
     return res;
 }
 

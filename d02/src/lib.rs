@@ -8,9 +8,10 @@ fn safe(report: &str) -> bool {
         .map(|x| x.parse::<i32>().unwrap())
         .collect();
     let increasing = levels[1] > levels[0];
-    for (n1, n2) in zip(&levels[..(levels.len() - 1)], &levels[1..]) {
-        let diff = (n2 - n1).abs();
-        if (n2 > n1) != increasing || (diff > 3 || diff == 0) {
+    for w in levels.windows(2) {
+        //zip(&levels[..(levels.len() - 1)], &levels[1..]) {
+        let diff = (w[1] - w[0]).abs();
+        if (w[1] > w[0]) != increasing || (diff > 3 || diff == 0) {
             return false;
         }
     }
@@ -38,23 +39,11 @@ fn safe_damp(report: &str) -> bool {
 }
 
 fn part1(input: String) -> i32 {
-    let mut res = 0;
-    for l in input.lines() {
-        if safe(l) {
-            res += 1;
-        }
-    }
-    return res;
+    return input.lines().filter(|l| safe(l)).count() as i32;
 }
 
 fn part2(input: String) -> i32 {
-    let mut res = 0;
-    for l in input.lines() {
-        if safe_damp(l) {
-            res += 1;
-        }
-    }
-    return res;
+    return input.lines().filter(|l| safe_damp(l)).count() as i32;
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {

@@ -1,4 +1,5 @@
 use regex::Regex;
+use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 
@@ -75,7 +76,7 @@ fn diag(input: &str) -> Vec<String> {
     res
 }
 
-fn part1(input: String) -> i32 {
+fn part1b(input: String) -> i32 {
     let re = Regex::new(r"XMAS").unwrap();
 
     rows(&input)
@@ -87,6 +88,44 @@ fn part1(input: String) -> i32 {
                 as i32
         })
         .sum()
+}
+
+fn part1(input: String) -> i32 {
+    let mut map = HashMap::new();
+    for (i, l) in input.lines().enumerate() {
+        for (j, c) in l.chars().enumerate() {
+            map.insert((i as i32, j as i32), c);
+        }
+    }
+    let mut dirs = Vec::new();
+    for i in -1..2 {
+        for j in -1..2 {
+            if (i == 0) && (j == 0) {
+                continue;
+            }
+            dirs.push((i, j));
+        }
+    }
+
+    let mas = [('M', 1), ('A', 2), ('S', 3)];
+    let mut res = 0;
+    for ((i, j), c) in map.iter() {
+        if *c != 'X' {
+            continue;
+        }
+        'outer: for (row, col) in &dirs {
+            if !map.contains_key(&(i + row * 3, j + col * 3)) {
+                continue;
+            }
+            for (cc, d) in mas {
+                if *(map.get(&(i + row * d, j + col * d)).unwrap()) != cc {
+                    continue 'outer;
+                }
+            }
+            res += 1
+        }
+    }
+    res
 }
 
 fn part2(input: String) -> i32 {
@@ -146,6 +185,23 @@ MXMXAXMASX"
         //println!("cols(&input): {:?}", cols(&input));
         //println!("diag(&input): {:?}", diag(&input));
         assert_eq!(18, part1(input));
+    }
+
+    #[test]
+    fn p1_1b() {
+        let input = "\
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX"
+            .to_string();
+        assert_eq!(18, part1b(input));
     }
 
     #[test]

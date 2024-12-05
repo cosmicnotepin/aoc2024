@@ -1,22 +1,19 @@
 use itertools::Itertools;
-use std::collections::HashMap;
+use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
 
 fn parse_input(
     input: &str,
 ) -> (
-    HashMap<usize, Vec<usize>>,
+    HashSet<(usize,usize)>,
     Vec<Vec<usize>>,
 ) {
-    let mut smallers = HashMap::new();
+    let mut smallers = HashSet::new();
     let (rules, updates) = input.split("\n\n").collect_tuple().unwrap();
     for line in rules.lines() {
-        let (a, b) = line
-            .split('|')
-            .map(|x| x.parse::<usize>().unwrap())
-            .collect_tuple().unwrap();
-            smallers.entry(b).or_insert(vec![]).push(a);
+        let (a, b) = line.split_once('|').unwrap();
+        smallers.insert((a.parse().unwrap(),b.parse().unwrap()));
     }
 
     let updates = updates
@@ -28,37 +25,9 @@ fn parse_input(
 
 fn test_update(
     update: &Vec<usize>,
-    smallers: &HashMap<usize, Vec<usize>>,
+    smallers: &HashSet<(usize, usize)>
 ) -> bool {
-    for (i, e) in update.iter().enumerate() {
-        for right in &update[i + 1..update.len()] {
-            if let Some(smllrs) = smallers.get(e) {
-                if smllrs.contains(right) {
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
-}
-
-fn fix_update(
-    update: &Vec<usize>,
-    smallers: &HashMap<usize, Vec<usize>>,
-) -> Vec<usize> {
-    let mut res: Vec<usize> = Vec::new();
-    'outer: for ie in &update[0..] {
-        for (i, e) in res.iter().enumerate() {
-            if let Some(v) = smallers.get(e) {
-                if v.contains(ie) {
-                    res.insert(i, *ie);
-                    continue 'outer;
-                }
-            }
-        }
-        res.push(*ie);
-    }
-    return res;
+    update.is_sorted_by(|a, b| smallers.contains(&(*a,*b)))
 }
 
 fn part1(input: String) -> i32 {
@@ -75,9 +44,10 @@ fn part1(input: String) -> i32 {
 fn part2(input: String) -> i32 {
     let mut res = 0;
     let (smallers, updates) = parse_input(&input);
-    for update in updates {
+    for mut update in updates {
         if !test_update(&update, &smallers) {
-            res += fix_update(&update, &smallers)[update.len() / 2] as i32;
+            update.sort_by(|a, b| (smallers.contains(&(*b,*a))).cmp(&true));
+            res += update[update.len() / 2] as i32;
         }
     }
     return res;

@@ -7,45 +7,30 @@ fn parse_input(
     input: &str,
 ) -> (
     HashMap<usize, Vec<usize>>,
-    HashMap<usize, Vec<usize>>,
     Vec<Vec<usize>>,
 ) {
-    let mut biggers = HashMap::new();
     let mut smallers = HashMap::new();
-    let mut updates_ret: Vec<Vec<usize>> = Vec::new();
-    if let Some((rules, updates)) = input.split("\n\n").collect_tuple() {
-        for line in rules.lines() {
-            if let Some((a, b)) = line
-                .split('|')
-                .map(|x| x.parse::<usize>().unwrap())
-                .collect_tuple()
-            {
-                biggers.entry(a).or_insert(vec![]).push(b);
-                smallers.entry(b).or_insert(vec![]).push(a);
-            }
-        }
-
-        updates_ret = updates
-            .lines()
-            .map(|l| l.split(',').map(|s| s.parse::<usize>().unwrap()).collect())
-            .collect();
+    let (rules, updates) = input.split("\n\n").collect_tuple().unwrap();
+    for line in rules.lines() {
+        let (a, b) = line
+            .split('|')
+            .map(|x| x.parse::<usize>().unwrap())
+            .collect_tuple().unwrap();
+            smallers.entry(b).or_insert(vec![]).push(a);
     }
-    (biggers, smallers, updates_ret)
+
+    let updates = updates
+        .lines()
+        .map(|l| l.split(',').map(|s| s.parse::<usize>().unwrap()).collect())
+        .collect();
+    (smallers, updates)
 }
 
 fn test_update(
     update: &Vec<usize>,
-    biggers: &HashMap<usize, Vec<usize>>,
     smallers: &HashMap<usize, Vec<usize>>,
 ) -> bool {
     for (i, e) in update.iter().enumerate() {
-        for left in &update[0..i] {
-            if let Some(bgrs) = biggers.get(e) {
-                if bgrs.contains(left) {
-                    return false;
-                }
-            }
-        }
         for right in &update[i + 1..update.len()] {
             if let Some(smllrs) = smallers.get(e) {
                 if smllrs.contains(right) {
@@ -59,12 +44,10 @@ fn test_update(
 
 fn fix_update(
     update: &Vec<usize>,
-    _biggers: &HashMap<usize, Vec<usize>>,
     smallers: &HashMap<usize, Vec<usize>>,
 ) -> Vec<usize> {
     let mut res: Vec<usize> = Vec::new();
-    res.push(update[0]);
-    'outer: for ie in &update[1..] {
+    'outer: for ie in &update[0..] {
         for (i, e) in res.iter().enumerate() {
             if let Some(v) = smallers.get(e) {
                 if v.contains(ie) {
@@ -80,9 +63,9 @@ fn fix_update(
 
 fn part1(input: String) -> i32 {
     let mut res = 0;
-    let (biggers, smallers, updates) = parse_input(&input);
+    let (smallers, updates) = parse_input(&input);
     for update in updates {
-        if test_update(&update, &biggers, &smallers) {
+        if test_update(&update, &smallers) {
             res += update[update.len() / 2] as i32;
         }
     }
@@ -91,10 +74,10 @@ fn part1(input: String) -> i32 {
 
 fn part2(input: String) -> i32 {
     let mut res = 0;
-    let (biggers, smallers, updates) = parse_input(&input);
+    let (smallers, updates) = parse_input(&input);
     for update in updates {
-        if !test_update(&update, &biggers, &smallers) {
-            res += fix_update(&update, &biggers, &smallers)[update.len() / 2] as i32;
+        if !test_update(&update, &smallers) {
+            res += fix_update(&update, &smallers)[update.len() / 2] as i32;
         }
     }
     return res;

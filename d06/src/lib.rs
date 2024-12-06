@@ -15,7 +15,7 @@ fn check_path(
     map: &HashMap<Point2<isize>, char>,
     _row_count: isize,
     _col_count: isize,
-) -> (usize, PathType) {
+) -> (HashSet<Point2<isize>>, PathType) {
     let dirs = [
         Vector2::new(-1, 0),
         Vector2::new(0, 1),
@@ -31,10 +31,10 @@ fn check_path(
     loop {
         let ahead = pos + dirs[dir_i];
         if !map.contains_key(&ahead) {
-            return (visited.len(), PathType::Escape);
+            return (visited, PathType::Escape);
         }
         if visited_dir.contains(&(ahead, dir_i)) {
-            return (visited.len(), PathType::Looping);
+            return (visited, PathType::Looping);
         }
 
         let at_ahead = map.get(&ahead).unwrap();
@@ -94,27 +94,25 @@ fn parse(input: String) -> (HashMap<Point2<isize>, char>, Point2<isize>, isize, 
 
 fn part1(input: String) -> i32 {
     let (map, pos, row_count, col_count) = parse(input);
-    let (pathlen, _pathtype) = check_path(&pos, &map, row_count, col_count);
-    pathlen as i32
+    let (path, _pathtype) = check_path(&pos, &map, row_count, col_count);
+    path.len() as i32
 }
 
 fn part2(input: String) -> i32 {
     let (mut map, pos, row_count, col_count) = parse(input);
     let mut res = 0;
-    for row in 0..row_count {
-        for col in 0..col_count {
-            let coords = Point2::new(row, col);
-            if *(map.get(&coords).unwrap()) == '#' || coords == pos {
-                continue;
-            }
-            map.insert(coords.clone(), '#');
-            let (_pathlen, pathtype) = check_path(&pos, &map, row_count, col_count);
-            match pathtype {
-                PathType::Looping => res += 1,
-                PathType::Escape => (),
-            }
-            map.insert(coords.clone(), '.');
+    let (path, _) = check_path(&pos, &map, row_count, col_count);
+    for coords in path {
+        if *(map.get(&coords).unwrap()) == '#' || coords == pos {
+            continue;
         }
+        map.insert(coords.clone(), '#');
+        let (_, pathtype) = check_path(&pos, &map, row_count, col_count);
+        match pathtype {
+            PathType::Looping => res += 1,
+            PathType::Escape => (),
+        }
+        map.insert(coords.clone(), '.');
     }
     return res;
 }

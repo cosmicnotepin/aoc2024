@@ -1,48 +1,57 @@
 extern crate nalgebra as na;
+use itertools::Itertools;
 use na::{Point2, Vector2};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
+use std::time::Instant;
 
 enum PathType {
     Looping,
     Escape,
 }
 
-fn check_path(
-    pos: &Point2<isize>,
-    map: &HashMap<Point2<isize>, char>,
-    _row_count: isize,
-    _col_count: isize,
-) -> (HashSet<Point2<isize>>, PathType) {
+fn check_path(pos: &Point2<isize>, map: &Vec<Vec<char>>) -> (Vec<(usize, usize)>, PathType) {
     let dirs = [
         Vector2::new(-1, 0),
         Vector2::new(0, 1),
         Vector2::new(1, 0),
         Vector2::new(0, -1),
     ];
+    let row_count = map.len();
+    let col_count = map[0].len();
     let mut dir_i = 0;
     let mut pos = pos.clone();
-    let mut visited: HashSet<Point2<isize>> = HashSet::new();
-    let mut visited_dir: HashSet<(Point2<isize>, usize)> = HashSet::new();
-    visited.insert(pos.clone());
+    let mut visited = vec![vec![[false; 4]; col_count as usize]; row_count as usize];
+    visited[pos.x as usize][pos.y as usize][dir_i] = true;
     //print_situation(&row_count, &col_count, &map, &visited);
     loop {
         let ahead = pos + dirs[dir_i];
-        if !map.contains_key(&ahead) {
-            return (visited, PathType::Escape);
+        if ahead.x < 0
+            || ahead.x as usize > row_count - 1
+            || ahead.y < 0
+            || ahead.y as usize > col_count - 1
+        {
+            let path = (0..row_count)
+                .cartesian_product(0..col_count)
+                .filter(|&(ri, ci)| visited[ri][ci].iter().any(|&a| a == true))
+                .collect();
+            return (path, PathType::Escape);
         }
-        if visited_dir.contains(&(ahead, dir_i)) {
-            return (visited, PathType::Looping);
+        if visited[ahead.x as usize][ahead.y as usize][dir_i] {
+            let path = (0..row_count)
+                .cartesian_product(0..col_count)
+                .filter(|&(ri, ci)| visited[ri][ci].iter().any(|&a| a == true))
+                .collect();
+            return (path, PathType::Looping);
         }
 
-        let at_ahead = map.get(&ahead).unwrap();
+        let at_ahead = map[ahead.x as usize][ahead.y as usize];
         match at_ahead {
             '.' => {
                 pos = ahead;
-                visited.insert(ahead.clone());
-                visited_dir.insert((ahead.clone(), dir_i));
+                visited[pos.x as usize][pos.y as usize][dir_i] = true;
             }
             '#' => dir_i = (dir_i + 1) % 4,
             other => panic!("dafuck: {}", other),
@@ -72,56 +81,58 @@ fn print_situation(
     }
 }
 
-fn parse(input: String) -> (HashMap<Point2<isize>, char>, Point2<isize>, isize, isize) {
-    let mut map: HashMap<Point2<isize>, char> = HashMap::new();
+fn parse(input: String) -> (Vec<Vec<char>>, Point2<isize>) {
     let mut pos: Point2<isize> = Point2::new(0, 0);
-    let row_count = input.lines().count() as isize;
-    let col_count = input.lines().next().unwrap().chars().count() as isize;
-
+    let mut map: Vec<Vec<char>> = Vec::new();
     for (ri, row) in input.lines().enumerate() {
+        map.push(Vec::new());
         for (ci, col) in row.chars().enumerate() {
             let coords = Point2::new(ri as isize, ci as isize);
             if col == '^' {
                 pos = coords.clone();
-                map.insert(coords, '.');
+                map[ri].push('.');
             } else {
-                map.insert(coords, col);
+                map[ri].push(col);
             }
         }
     }
-    (map, pos, row_count, col_count)
+    (map, pos)
 }
 
 fn part1(input: String) -> i32 {
-    let (map, pos, row_count, col_count) = parse(input);
-    let (path, _pathtype) = check_path(&pos, &map, row_count, col_count);
+    let (map, pos) = parse(input);
+    let (path, _pathtype) = check_path(&pos, &map);
     path.len() as i32
 }
 
 fn part2(input: String) -> i32 {
-    let (mut map, pos, row_count, col_count) = parse(input);
+    let (mut map, pos) = parse(input);
     let mut res = 0;
-    let (path, _) = check_path(&pos, &map, row_count, col_count);
-    for coords in path {
-        if *(map.get(&coords).unwrap()) == '#' || coords == pos {
+    let (path, _) = check_path(&pos, &map);
+    for (ri, ci) in path {
+        if map[ri][ci] == '#' || pos.x as usize == ri && pos.y as usize == ci {
             continue;
         }
-        map.insert(coords.clone(), '#');
-        let (_, pathtype) = check_path(&pos, &map, row_count, col_count);
+        map[ri][ci] = '#';
+        let (_, pathtype) = check_path(&pos, &map);
         match pathtype {
             PathType::Looping => res += 1,
             PathType::Escape => (),
         }
-        map.insert(coords.clone(), '.');
+        map[ri][ci] = '.';
     }
     return res;
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
+    let before1 = Instant::now();
     let input1 = fs::read_to_string("input1")?;
-    println!("part 1: {}", part1(input1));
+    let p1 = part1(input1);
+    println!("part 1: {} in {:.2?}", p1, before1.elapsed());
+    let before2 = Instant::now();
     let input2 = fs::read_to_string("input1")?;
-    println!("part 2: {}", part2(input2));
+    let p2 = part2(input2);
+    println!("part 2: {} in {:.2?}", p2, before2.elapsed());
 
     Ok(())
 }

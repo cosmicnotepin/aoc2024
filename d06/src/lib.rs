@@ -13,9 +13,8 @@ enum PathType {
 fn check_path(
     pos: &Point2<isize>,
     map: &HashMap<Point2<isize>, char>,
-    extra_obstruction: Option<Point2<isize>>,
-    row_count: isize,
-    col_count: isize,
+    _row_count: isize,
+    _col_count: isize,
 ) -> (usize, PathType) {
     let dirs = [
         Vector2::new(-1, 0),
@@ -37,12 +36,6 @@ fn check_path(
         if visited_dir.contains(&(ahead, dir_i)) {
             return (visited.len(), PathType::Looping);
         }
-        if let Some(extra_obstruction) = extra_obstruction {
-            if ahead == extra_obstruction {
-                dir_i = (dir_i + 1) % 4;
-                continue;
-            }
-        }
 
         let at_ahead = map.get(&ahead).unwrap();
         match at_ahead {
@@ -57,6 +50,7 @@ fn check_path(
     }
 }
 
+#[allow(dead_code)]
 fn print_situation(
     row_count: &isize,
     col_count: &isize,
@@ -100,12 +94,12 @@ fn parse(input: String) -> (HashMap<Point2<isize>, char>, Point2<isize>, isize, 
 
 fn part1(input: String) -> i32 {
     let (map, pos, row_count, col_count) = parse(input);
-    let (pathlen, _pathtype) = check_path(&pos, &map, None, row_count, col_count);
+    let (pathlen, _pathtype) = check_path(&pos, &map, row_count, col_count);
     pathlen as i32
 }
 
 fn part2(input: String) -> i32 {
-    let (map, pos, row_count, col_count) = parse(input);
+    let (mut map, pos, row_count, col_count) = parse(input);
     let mut res = 0;
     for row in 0..row_count {
         for col in 0..col_count {
@@ -113,11 +107,13 @@ fn part2(input: String) -> i32 {
             if *(map.get(&coords).unwrap()) == '#' || coords == pos {
                 continue;
             }
-            let (_pathlen, pathtype) = check_path(&pos, &map, Some(coords), row_count, col_count);
+            map.insert(coords.clone(), '#');
+            let (_pathlen, pathtype) = check_path(&pos, &map, row_count, col_count);
             match pathtype {
                 PathType::Looping => res += 1,
                 PathType::Escape => (),
             }
+            map.insert(coords.clone(), '.');
         }
     }
     return res;

@@ -37,7 +37,7 @@ fn part2(input: String) -> usize {
         let numbers: Vec<usize> = numbers.split(' ').map(|n| n.parse().unwrap()).collect();
         let mut calc_vals = vec![numbers[0]];
         let operators: Vec<fn(usize, usize) -> usize> = vec![|x, y| x + y, |x, y| x * y, |x, y| {
-            (x.to_string() + &(y.to_string())).parse().unwrap()
+            x * 10usize.pow(x.ilog10() + 1) + y
         }];
         for n in &numbers[1..] {
             let mut new_calc_vals: Vec<usize> = Vec::new();

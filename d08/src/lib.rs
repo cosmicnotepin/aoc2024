@@ -1,4 +1,5 @@
 extern crate nalgebra as na;
+use itertools::Itertools;
 use na::Point2;
 use std::cmp::max;
 use std::collections::HashMap;
@@ -18,7 +19,7 @@ fn part2(input: String, harmonics: bool) -> i32 {
             }
             antenna_types
                 .entry(c)
-                .or_insert(Vec::new())
+                .or_default()
                 .push(Point2::new(row as isize, col as isize));
         }
     }
@@ -30,14 +31,12 @@ fn part2(input: String, harmonics: bool) -> i32 {
         harms = 1..2;
     }
     for antennas in antenna_types.values() {
-        for (i, a1) in antennas.iter().enumerate() {
-            for a2 in &antennas[i + 1..] {
-                let diff = a2 - a1;
-                for m in harms.clone() {
-                    for c in [a2 + m * diff, a1 - m * diff] {
-                        if c.x >= 0 && c.x < row_count && c.y >= 0 && c.y < col_count {
-                            antinodes.insert(c);
-                        }
+        for (a1, a2) in antennas.iter().tuple_combinations() {
+            let diff = a2 - a1;
+            for m in harms.clone() {
+                for c in [a2 + m * diff, a1 - m * diff] {
+                    if (0..row_count).contains(&c.x) && (0..col_count).contains(&c.y) {
+                        antinodes.insert(c);
                     }
                 }
             }

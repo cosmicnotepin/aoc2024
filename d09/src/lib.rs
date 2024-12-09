@@ -116,19 +116,25 @@ fn part2(input: String) -> isize {
         })
         .collect();
 
+    let mut i = map.len();
     loop {
+        if i == 0 {
+            break;
+        }
+        i -= 1;
         let mut insert_i = map.len();
         let mut move_i = map.len();
-        'outer: for (i, cb) in map.iter().enumerate().rev() {
-            if !cb.checked && cb.is_file {
-                move_i = i;
-                for (j, cf) in map.iter().take(i).enumerate() {
-                    if !cf.is_file && cf.size >= cb.size {
-                        insert_i = j;
-                        break 'outer;
-                    }
+        let cb = &(map[i]);
+        if !cb.checked && cb.is_file {
+            move_i = i;
+            for (j, cf) in map.iter().take(i).enumerate() {
+                if !cf.is_file && cf.size >= cb.size {
+                    insert_i = j;
+                    break;
                 }
             }
+        } else {
+            continue;
         }
         if move_i == map.len() {
             break;

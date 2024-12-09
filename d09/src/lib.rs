@@ -2,6 +2,54 @@ use std::error::Error;
 use std::fs;
 use std::time::Instant;
 
+fn solve(mut files: Vec<(usize, i32)>) -> usize {
+    let mut i = files.len() - 1;
+    while i > 0 {
+        let (size, id) = files[i];
+        if id == -1 {
+            i -= 1;
+            continue;
+        }
+        if let Some(j) = files[0..i]
+            .iter()
+            .position(|&(s, id)| id == -1 && size <= s)
+        {
+            let s = files[j].0;
+            files[j] = (size, id);
+            files[i] = (size, -1);
+            if size < s {
+                files.insert(j + 1, (s - size, -1));
+            }
+        }
+        i -= 1;
+    }
+    files
+        .iter()
+        .flat_map(|&(s, id)| (0..s).map(move |_| id))
+        .enumerate()
+        .map(|(i, id)| if id == -1 { 0 } else { i * id as usize })
+        .sum()
+}
+
+fn part3(input: &str) -> (usize, usize) {
+    let mut fs1 = Vec::new();
+    let mut fs2 = Vec::new();
+    let mut fid = 0;
+    for (i, b) in input.bytes().enumerate() {
+        let v = if i % 2 == 0 {
+            fid += 1;
+            fid - 1
+        } else {
+            -1
+        };
+        fs1.extend((0..b - b'0').map(|_| (1, v)));
+        fs2.push(((b - b'0') as usize, v));
+    }
+    let p1 = solve(fs1);
+    let p2 = solve(fs2);
+    (p1, p2)
+}
+
 fn part1(input: String) -> isize {
     let map: Vec<(isize, isize)> = input
         .chars()
@@ -89,10 +137,23 @@ fn part2(input: String) -> isize {
         if insert_i == map.len() {
             continue;
         }
-        map[insert_i].size -= map[move_i].size;
-        let to_insert = map[move_i];
+        map[insert_i].id = map[move_i].id;
+        let rest = map[insert_i].size - map[move_i].size;
+        map[insert_i].size = map[move_i].size;
+        map[insert_i].checked = true;
         map[move_i].is_file = false;
-        map.insert(insert_i, to_insert);
+        map[insert_i].is_file = true;
+        if rest > 0 {
+            map.insert(
+                insert_i + 1,
+                Chunk {
+                    id: 0,
+                    size: rest,
+                    is_file: false,
+                    checked: true,
+                },
+            );
+        }
         //for c in map.iter() {
         //    for _ in 0..c.size {
         //        if c.is_file {
@@ -129,6 +190,11 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let input2 = fs::read_to_string("input1")?;
     let p2 = part2(input2);
     println!("part 2: {} in {:.2?}", p2, before2.elapsed());
+
+    let before3 = Instant::now();
+    let input3 = fs::read_to_string("input1")?;
+    let (p3_1, p3_2) = part3(&input3);
+    println!("part 3: {},{} in {:.2?}", p3_1, p3_2, before3.elapsed());
 
     Ok(())
 }

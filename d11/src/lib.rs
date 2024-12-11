@@ -17,9 +17,10 @@ fn part1(input: &String, blink_count: usize) -> usize {
                 new_stones.push(1);
             } else if ((stone.ilog10() + 1) % 2) == 0 {
                 let digits = (stone.ilog10() + 1) as usize;
-                let new_stone = stone / 10usize.pow((digits / 2) as u32);
-                new_stones.push(new_stone);
-                new_stones.push(stone - (new_stone * 10usize.pow((digits / 2) as u32)));
+                let new_stone_1 = stone / 10usize.pow((digits / 2) as u32);
+                let new_stone_2 = stone % 10usize.pow((digits / 2) as u32);
+                new_stones.push(new_stone_1);
+                new_stones.push(new_stone_2);
             } else {
                 new_stones.push(stone * 2024);
             }

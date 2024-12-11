@@ -4,6 +4,40 @@ use std::error::Error;
 use std::fs;
 use std::time::Instant;
 
+fn update(old_stones: &HashMap<i64, usize>) -> HashMap<i64, usize> {
+    let mut stones = HashMap::with_capacity(old_stones.len());
+    for (&s, &v) in old_stones {
+        match s {
+            0 => *stones.entry(1).or_default() += v,
+            _ => {
+                let digits = s.ilog10() + 1;
+                if digits % 2 == 0 {
+                    *stones.entry(s % 10i64.pow(digits / 2)).or_default() += v;
+                    *stones.entry(s / 10i64.pow(digits / 2)).or_default() += v;
+                } else {
+                    *stones.entry(s * 2024).or_default() += v
+                }
+            }
+        }
+    }
+    stones
+}
+
+fn main(input: &str) -> (usize, usize) {
+    let mut stones = input
+        .trim()
+        .split(' ')
+        .map(|w| (w.parse().unwrap(), 1))
+        .collect::<HashMap<_, _>>();
+    let mut p1 = 0;
+    for i in 0..75 {
+        if i == 25 {
+            p1 = stones.values().sum();
+        }
+        stones = update(&stones);
+    }
+    (p1, stones.values().sum())
+}
 fn part1(input: &String, blink_count: usize) -> usize {
     let mut stones: Vec<usize> = input
         .trim()
@@ -80,6 +114,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let input2 = fs::read_to_string("input1")?;
     let p2 = part2(&input2, 75);
     println!("part 2: {} in {:.2?}", p2, before2.elapsed());
+    let before3 = Instant::now();
+    let input3 = fs::read_to_string("input1")?;
+    let (_, p3) = main(&input3);
+    println!("part al: {} in {:.2?}", p3, before3.elapsed());
 
     Ok(())
 }

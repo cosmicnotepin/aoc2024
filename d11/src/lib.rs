@@ -77,13 +77,10 @@ fn blink(blink_count: usize, stone: usize, cache: &mut HashMap<(usize, usize), u
         res = blink(blink_count - 1, 1, cache);
     } else if ((stone.ilog10() + 1) % 2) == 0 {
         let digits = (stone.ilog10() + 1) as usize;
-        let new_stone = stone / 10usize.pow((digits / 2) as u32);
+        let mut new_stone = stone / 10usize.pow((digits / 2) as u32);
         res += blink(blink_count - 1, new_stone, cache);
-        res += blink(
-            blink_count - 1,
-            stone - (new_stone * 10usize.pow((digits / 2) as u32)),
-            cache,
-        );
+        new_stone = stone % 10usize.pow((digits / 2) as u32);
+        res += blink(blink_count - 1, new_stone, cache);
     } else {
         res = blink(blink_count - 1, stone * 2024, cache);
     }

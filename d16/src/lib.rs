@@ -1,4 +1,5 @@
 use std::collections::BinaryHeap;
+use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
 use std::time::Instant;
@@ -65,24 +66,8 @@ fn part1(input: String) -> isize {
             if at_n == '#' {
                 continue;
             }
-            let mut doit = false;
             if scores[dir_n_i] > score {
                 map[row_n][col_n].1[dir_n_i] = score;
-                doit = true;
-            }
-            if scores[(dir_n_i + 1) % 4] > score + 1000 {
-                map[row_n][col_n].1[(dir_n_i + 1) % 4] = score + 1000;
-                doit = true;
-            }
-            if scores[(dir_n_i + 3) % 4] > score + 1000 {
-                map[row_n][col_n].1[(dir_n_i + 3) % 4] = score + 1000;
-                doit = true;
-            }
-            if scores[(dir_n_i + 2) % 4] > score + 2000 {
-                map[row_n][col_n].1[(dir_n_i + 2) % 4] = score + 2000;
-                doit = true;
-            }
-            if doit {
                 todo.push((-score, (row_n, col_n), dir_n_i));
             }
         }
@@ -90,8 +75,61 @@ fn part1(input: String) -> isize {
     return 0;
 }
 
-fn part2(input: String) -> i32 {
-    return input.len().try_into().unwrap();
+fn part2(input: String) -> usize {
+    let dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+    let mut pos = (0, 0);
+    let mut map: Vec<Vec<(char, [isize; 4])>> = Vec::new();
+    let mut todo: BinaryHeap<(isize, (usize, usize), usize, Vec<(usize, usize)>)> =
+        BinaryHeap::new();
+    for (row_i, row) in input.lines().enumerate() {
+        let mut new_row: Vec<(char, [isize; 4])> = Vec::new();
+        for (col_i, col) in row.chars().enumerate() {
+            if col == 'S' {
+                todo.push((0, (row_i, col_i), 1, vec![(row_i, col_i)]));
+                pos.0 = row_i;
+                pos.1 = col_i;
+                new_row.push(('.', [1000, 0, 1000, 2000]));
+            } else {
+                new_row.push((col, [isize::MAX, isize::MAX, isize::MAX, isize::MAX]));
+            }
+        }
+        map.push(new_row);
+    }
+
+    let mut good_seats: HashSet<(usize, usize)> = HashSet::new();
+    let mut best_score = isize::MAX;
+    while todo.len() > 0 {
+        //print_map(&map, &todo);
+        let (score, (row_p, col_p), dir_i, path) = todo.pop().unwrap();
+        let score = -score;
+        let mut neighbs = Vec::new();
+        neighbs.push((score + 1, dir_i));
+        neighbs.push((score + 1001, (dir_i + 1) % 4));
+        neighbs.push((score + 1001, (dir_i + 3) % 4));
+        for (score, dir_n_i) in neighbs {
+            let (row_d, col_d) = dirs[dir_n_i];
+            let row_n = ((row_p as isize) + row_d) as usize;
+            let col_n = ((col_p as isize) + col_d) as usize;
+            let (at_n, scores) = map[row_n][col_n];
+            if at_n == 'E' && scores.iter().all(|&s| s >= score) {
+                best_score = score;
+                map[row_n][col_n].1[dir_n_i] = score;
+                for seat in &path {
+                    good_seats.insert(*seat);
+                }
+            }
+            if at_n == '#' {
+                continue;
+            }
+            if scores[dir_n_i] >= score && best_score > score {
+                map[row_n][col_n].1[dir_n_i] = score;
+                let mut new_path = path.clone();
+                new_path.push((row_n, col_n));
+                todo.push((-score, (row_n, col_n), dir_n_i, new_path));
+            }
+        }
+    }
+    return good_seats.len() + 1; //+1 because 'E' is not counted
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -155,5 +193,51 @@ mod tests {
 #################"
             .to_string();
         assert_eq!(11048, part1(input));
+    }
+
+    #[test]
+    fn p2_1() {
+        let input = "\
+###############
+#.......#....E#
+#.#.###.#.###.#
+#.....#.#...#.#
+#.###.#####.#.#
+#.#.#.......#.#
+#.#.#####.###.#
+#...........#.#
+###.#.#####.#.#
+#...#.....#.#.#
+#.#.#.###.#.#.#
+#.....#...#.#.#
+#.###.#.#.#.#.#
+#S..#.....#...#
+###############"
+            .to_string();
+        assert_eq!(45, part2(input));
+    }
+
+    #[test]
+    fn p2_2() {
+        let input = "\
+#################
+#...#...#...#..E#
+#.#.#.#.#.#.#.#.#
+#.#.#.#...#...#.#
+#.#.#.#.###.#.#.#
+#...#.#.#.....#.#
+#.#.#.#.#.#####.#
+#.#...#.#.#.....#
+#.#.#####.#.###.#
+#.#.#.......#...#
+#.#.###.#####.###
+#.#.#...#.....#.#
+#.#.#.#####.###.#
+#.#.#.........#.#
+#.#.#.#########.#
+#S#.............#
+#################"
+            .to_string();
+        assert_eq!(64, part2(input));
     }
 }

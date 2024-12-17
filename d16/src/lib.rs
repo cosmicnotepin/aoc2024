@@ -47,7 +47,7 @@ fn part1(input: String) -> isize {
     }
 
     while todo.len() > 0 {
-        print_map(&map, &todo);
+        //print_map(&map, &todo);
         let (score, (row_p, col_p), dir_i) = todo.pop().unwrap();
         let score = -score;
         let mut neighbs = Vec::new();
@@ -58,28 +58,28 @@ fn part1(input: String) -> isize {
             let (row_d, col_d) = dirs[dir_n_i];
             let row_n = ((row_p as isize) + row_d) as usize;
             let col_n = ((col_p as isize) + col_d) as usize;
-            let (at_n, mut scores) = &map[row_n][col_n];
-            if *at_n == 'E' {
+            let (at_n, scores) = map[row_n][col_n];
+            if at_n == 'E' {
                 return score;
             }
-            if *at_n == '#' {
+            if at_n == '#' {
                 continue;
             }
             let mut doit = false;
             if scores[dir_n_i] > score {
-                scores[dir_n_i] = score;
+                map[row_n][col_n].1[dir_n_i] = score;
                 doit = true;
             }
             if scores[(dir_n_i + 1) % 4] > score + 1000 {
-                scores[(dir_n_i + 1) % 4] = score + 1000;
+                map[row_n][col_n].1[(dir_n_i + 1) % 4] = score + 1000;
                 doit = true;
             }
             if scores[(dir_n_i + 3) % 4] > score + 1000 {
-                scores[(dir_n_i + 3) % 4] = score + 1000;
+                map[row_n][col_n].1[(dir_n_i + 3) % 4] = score + 1000;
                 doit = true;
             }
             if scores[(dir_n_i + 2) % 4] > score + 2000 {
-                scores[(dir_n_i + 2) % 4] = score + 2000;
+                map[row_n][col_n].1[(dir_n_i + 2) % 4] = score + 2000;
                 doit = true;
             }
             if doit {

@@ -110,10 +110,10 @@ fn part2(input: String) -> usize {
             let (row_d, col_d) = dirs[dir_n_i];
             let row_n = ((row_p as isize) + row_d) as usize;
             let col_n = ((col_p as isize) + col_d) as usize;
-            let (at_n, scores) = map[row_n][col_n];
+            let (at_n, ref mut scores) = map[row_n][col_n];
             if at_n == 'E' && scores.iter().all(|&s| s >= score) {
                 best_score = score;
-                map[row_n][col_n].1[dir_n_i] = score;
+                scores[dir_n_i] = score;
                 for seat in &path {
                     good_seats.insert(*seat);
                 }
@@ -122,7 +122,7 @@ fn part2(input: String) -> usize {
                 continue;
             }
             if scores[dir_n_i] >= score && best_score > score {
-                map[row_n][col_n].1[dir_n_i] = score;
+                scores[dir_n_i] = score;
                 let mut new_path = path.clone();
                 new_path.push((row_n, col_n));
                 todo.push((-score, (row_n, col_n), dir_n_i, new_path));

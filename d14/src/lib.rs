@@ -39,7 +39,7 @@ fn print_map(map: &Vec<Vec<char>>, seconds: isize) {
 }
 fn part2(input: String, row_count: isize, col_count: isize) -> isize {
     let re = Regex::new(r"-?\d+").unwrap();
-    let bots: Vec<(isize, isize, isize, isize)> = input
+    let mut bots: Vec<(isize, isize, isize, isize)> = input
         .lines()
         .map(|l| {
             re.find_iter(l)
@@ -49,48 +49,25 @@ fn part2(input: String, row_count: isize, col_count: isize) -> isize {
         })
         .collect();
 
-    'outer: for i in 0..1000000000000000 {
-        let mut quadrants = [0, 0, 0, 0];
-        for (col, row, col_v, row_v) in &bots {
-            let row_i = (row + i * (row_v + row_count)) % row_count;
-            let col_i = (col + i * (col_v + col_count)) % col_count;
-            if col_i != col_count / 2 && row_i != row_count / 2 {
-                quadrants
-                    [(row_i > row_count / 2) as usize + 2 * ((col_i > col_count / 2) as usize)] +=
-                    1;
+    let mut best_dist = isize::MAX;
+    for i in 0..1000000000000000 {
+        for (ref mut col, ref mut row, col_v, row_v) in bots.iter_mut() {
+            *row = (*row + (*row_v + row_count)) % row_count;
+            *col = (*col + (*col_v + col_count)) % col_count;
+        }
+        let dist: isize = bots
+            .iter()
+            .tuple_combinations()
+            .map(|((r1, c1, _, _), (r2, c2, _, _))| (r1 - r2).abs() + (c1 - c2).abs())
+            .sum();
+        if dist <= best_dist {
+            best_dist = dist;
+            let mut map: Vec<Vec<char>> = vec![vec!['.'; col_count as usize]; row_count as usize];
+            for (col, row, _col_v, _row_v) in &bots {
+                map[*row as usize][*col as usize] = '#';
             }
-            //let offset = 25;
-            //println!("pos: : {:?}", (row_i, col_i));
-            //if col_i > col_count / 2 {
-            //    print!("right side: ");
-            //    if (row_i - row_count / 2) < (col_i - col_count / 2) - row_count / 2 - offset {
-            //        println!("above");
-            //        continue 'outer;
-            //    }
-            //    println!("below");
-            //} else {
-            //    print!("left side: ");
-            //    if (row_i - row_count / 2) < -(col_i - col_count / 2) - row_count / 2 - offset {
-            //        println!("above");
-            //        continue 'outer;
-            //    }
-            //    println!("below");
-            //}
-            //println!("in tree");
+            print_map(&map, i + 1);
         }
-        //if !(quadrants[0] == quadrants[2] && quadrants[1] == quadrants[3])
-        //    || !(quadrants[0] + 10 < quadrants[1])
-        //{
-        //    continue 'outer;
-        //}
-        let mut map: Vec<Vec<char>> = vec![vec!['.'; col_count as usize]; row_count as usize];
-        for (col, row, col_v, row_v) in &bots {
-            let row_i = ((row + i * (row_v + row_count)) % row_count) as usize;
-            let col_i = ((col + i * (col_v + col_count)) % col_count) as usize;
-            map[row_i][col_i] = '#';
-        }
-        print_map(&map, i);
-        //return i;
     }
 
     return 0;

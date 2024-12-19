@@ -1,0 +1,13 @@
+Register A: 22571680
+Register B: 0
+Register C: 0
+
+Program: 
+2,4,   B = A%8
+1,3,   B = B^3
+7,5,   C = A/2.pow(B)
+0,3,   A = A/2.pow(3)
+4,3,   B = B^C
+1,5,   B = B^5
+5,5,   out <= B%8
+3,0    A!=0? -> again, else stop

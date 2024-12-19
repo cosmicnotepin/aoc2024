@@ -44,27 +44,59 @@ fn part1(input: String) -> String {
             ip += 2;
         }
     }
+    println!("(a, b, c):{:?},{:?},{:?},", combo[4], combo[5], combo[6]);
     out.pop();
+    return out;
+}
+
+fn checker(a: &usize, program: &Vec<usize>) -> Vec<usize> {
+    let mut ip: usize = 0;
+    let mut combo = [0, 1, 2, 3, *a, 0, 0, 7];
+    let mut out: Vec<usize> = Vec::new();
+    while ip < program.len() {
+        let opc = program[ip];
+        let opr = program[ip + 1];
+        let mut jumped = false;
+        match opc {
+            0 => combo[4] /= 2usize.pow(combo[opr] as u32),
+            1 => combo[5] ^= opr,
+            2 => combo[5] = combo[opr] % 8,
+            3 => {
+                if combo[4] != 0 {
+                    ip = opr;
+                    jumped = true;
+                }
+            }
+
+            4 => combo[5] ^= combo[6],
+            5 => out.push(combo[opr] % 8),
+            6 => combo[5] = combo[4] / 2usize.pow(combo[opr] as u32),
+            7 => combo[6] = combo[4] / 2usize.pow(combo[opr] as u32),
+            _ => println!("other"),
+        }
+        if !jumped {
+            ip += 2;
+        }
+    }
     return out;
 }
 
 fn part2(input: String) -> usize {
     let re = Regex::new(r"\d+").unwrap();
-    let (register_s, program_s) = input.split_once("\n\n").unwrap();
-    let (_, b, c) = re
-        .find_iter(register_s)
-        .map(|n| n.as_str().parse::<usize>().unwrap())
-        .collect_tuple()
-        .unwrap();
+    let (_register_s, program_s) = input.split_once("\n\n").unwrap();
     let program: Vec<usize> = re
         .find_iter(program_s)
         .map(|n| n.as_str().parse::<usize>().unwrap())
         .collect();
-    let mut a = 0;
+    let mut a: usize = 0;
+    let mut doom: Vec<usize> = vec![0; program.len()];
+    //let mut a = 216133732885152;
+    //let mut a = 22571680;
+    let mut out_i = program.len() - 1;
+    println!("program: {:?}", program);
     'outer: loop {
-        let mut out_i = 0;
         let mut ip: usize = 0;
-        let mut combo = [0, 1, 2, 3, a, b, c, 7];
+        let mut combo = [0, 1, 2, 3, a, 0, 0, 7];
         while ip < program.len() {
             let opc = program[ip];
             let opr = program[ip + 1];
@@ -82,11 +114,49 @@ fn part2(input: String) -> usize {
 
                 4 => combo[5] ^= combo[6],
                 5 => {
+                    if out_i == 0 && (combo[opr] % 8) == program[out_i] {
+                        println!("{:#066b}", a);
+                        println!("doom[out_i]: {:?}", doom[out_i]);
+                        println!("out_i: {:?}", out_i);
+                        println!("program: {:?}", program.iter().rev().collect::<Vec<_>>());
+                        println!(
+                            "checker: {:?}",
+                            checker(&a, &program).iter().rev().collect::<Vec<_>>()
+                        );
+                        break 'outer;
+                    }
                     if (combo[opr] % 8) != program[out_i] {
+                        println!("{:#066b}", a);
+                        println!("doom[out_i]: {:?}", doom[out_i]);
+                        println!("out_i: {:?}", out_i);
+                        println!("program: {:?}", program.iter().rev().collect::<Vec<_>>());
+                        println!(
+                            "checker: {:?}",
+                            checker(&a, &program).iter().rev().collect::<Vec<_>>()
+                        );
+                        if doom[out_i] > 6 {
+                            doom[out_i] = 0;
+                            out_i += 1;
+                            doom[out_i] += 1;
+                            a /= 8;
+                            a += 1;
+                            continue 'outer;
+                        }
+                        doom[out_i] += 1;
                         a += 1;
                         continue 'outer;
                     }
-                    out_i += 1;
+                    println!("doom[out_i]: {:?}", doom[out_i]);
+                    println!("{:#066b}", a);
+                    println!("out_i: {:?}", out_i);
+                    println!("program: {:?}", program.iter().rev().collect::<Vec<_>>());
+                    println!(
+                        "checker: {:?}",
+                        checker(&a, &program).iter().rev().collect::<Vec<_>>()
+                    );
+                    out_i -= 1;
+                    a *= 8;
+                    continue 'outer;
                 }
                 6 => combo[5] = combo[4] / 2usize.pow(combo[opr] as u32),
                 7 => combo[6] = combo[4] / 2usize.pow(combo[opr] as u32),
@@ -96,13 +166,11 @@ fn part2(input: String) -> usize {
                 ip += 2;
             }
         }
-        if out_i == program.len() {
-            break;
-        }
-        a += 1;
     }
     return a;
 }
+// too low: 216133732885152
+//          216216791768685
 
 pub fn run() -> Result<(), Box<dyn Error>> {
     let before1 = Instant::now();
@@ -131,6 +199,18 @@ Register C: 0
 Program: 0,3,5,4,3,0"
             .to_string();
         assert_eq!(117440, part2(input));
+    }
+
+    #[test]
+    fn p2_2() {
+        let input = "\
+Register A: 216216791768685
+Register B: 0
+Register C: 0
+
+Program: 2,4,1,3,7,5,0,3,4,3,1,5,5,5,3,0"
+            .to_string();
+        assert_eq!("2,4,1,3,7,5,0,3,4,3,1,5,5,5,3,0", part1(input));
     }
 
     #[test]
@@ -166,6 +246,7 @@ Register C: 9
 
 Program: 2,6"
             .to_string();
+        println!("input : {:?}", input);
         assert_eq!("", part1(input));
     }
 
@@ -190,6 +271,7 @@ Register C: 0
 
 Program: 1,7"
             .to_string();
+        println!("input : {:?}", input);
         assert_eq!("", part1(input));
     }
 
@@ -202,6 +284,7 @@ Register C: 43690
 
 Program: 4,0"
             .to_string();
+        println!("input : {:?}", input);
         assert_eq!("", part1(input));
     }
 }

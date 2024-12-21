@@ -115,45 +115,18 @@ fn part2(input: String) -> usize {
                 4 => combo[5] ^= combo[6],
                 5 => {
                     if out_i == 0 && (combo[opr] % 8) == program[out_i] {
-                        println!("{:#066b}", a);
-                        println!("doom[out_i]: {:?}", doom[out_i]);
-                        println!("out_i: {:?}", out_i);
-                        println!("program: {:?}", program.iter().rev().collect::<Vec<_>>());
-                        println!(
-                            "checker: {:?}",
-                            checker(&a, &program).iter().rev().collect::<Vec<_>>()
-                        );
                         break 'outer;
                     }
                     if (combo[opr] % 8) != program[out_i] {
-                        println!("{:#066b}", a);
-                        println!("doom[out_i]: {:?}", doom[out_i]);
-                        println!("out_i: {:?}", out_i);
-                        println!("program: {:?}", program.iter().rev().collect::<Vec<_>>());
-                        println!(
-                            "checker: {:?}",
-                            checker(&a, &program).iter().rev().collect::<Vec<_>>()
-                        );
-                        if doom[out_i] > 6 {
+                        while doom[out_i] > 6 {
                             doom[out_i] = 0;
                             out_i += 1;
-                            doom[out_i] += 1;
                             a /= 8;
-                            a += 1;
-                            continue 'outer;
                         }
                         doom[out_i] += 1;
                         a += 1;
                         continue 'outer;
                     }
-                    println!("doom[out_i]: {:?}", doom[out_i]);
-                    println!("{:#066b}", a);
-                    println!("out_i: {:?}", out_i);
-                    println!("program: {:?}", program.iter().rev().collect::<Vec<_>>());
-                    println!(
-                        "checker: {:?}",
-                        checker(&a, &program).iter().rev().collect::<Vec<_>>()
-                    );
                     out_i -= 1;
                     a *= 8;
                     continue 'outer;
@@ -170,6 +143,7 @@ fn part2(input: String) -> usize {
     return a;
 }
 // too low: 216133732885152
+//          216216791768685
 //          216216791768685
 
 pub fn run() -> Result<(), Box<dyn Error>> {

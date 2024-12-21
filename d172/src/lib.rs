@@ -48,9 +48,6 @@ fn part2(input: String) -> usize {
                     prog_i -= 1;
                     a /= 8;
                 }
-                aati[prog_i] += 1;
-                a += 1;
-                continue;
             }
             a += 1;
             aati[prog_i] += 1;

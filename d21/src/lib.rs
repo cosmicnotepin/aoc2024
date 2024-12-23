@@ -7,8 +7,6 @@ use std::error::Error;
 use std::fs;
 use std::time::Instant;
 
-//     v<<AA>A^>AAvA^<A>AAvA^Av<A^>A<A>Av<A^>A<A>Av<A<A>^>AAvA^<A>A
-// <v<A>>^AA<vA<A>>^AAvAA<^A>A<vA>^A<A>A<vA>^A<A>A<v<A>A>^AAvA<^A>A
 fn to_map(map_s: &str) -> Vec<Vec<char>> {
     return map_s
         .lines()
@@ -225,78 +223,3 @@ mod tests {
         assert_eq!(0, part2(input));
     }
 }
-
-//fn get_sequence(seq: &Vec<char>, map: &Vec<Vec<char>>) -> Vec<Vec<char>> {
-//    let mut pos = (0, 0);
-//    for r in 0..map.len() {
-//        for c in 0..map[0].len() {
-//            if map[r][c] == 'A' {
-//                pos = (r, c);
-//            }
-//        }
-//    }
-//    let mut res = Vec::new();
-//    let dir2but = HashMap::from([
-//        ((0, 0), '_'),
-//        ((-1, 0), '^'),
-//        ((0, 1), '>'),
-//        ((1, 0), 'v'),
-//        ((0, -1), '<'),
-//        ((-1, -1), 'A'),
-//    ]);
-//    for it in seq {
-//        //println!("it : {:?}", it);
-//        let mut todo = VecDeque::new();
-//        todo.push_back((pos, vec![]));
-//        let mut visited = HashSet::new();
-//        'outer: loop {
-//            let ((r, c), path) = todo.pop_front().unwrap();
-//            let dirs = vec![(0, 0), (-1, 0), (0, 1), (1, 0), (0, -1)];
-//            for (rd, cd) in dirs {
-//                let (rn, cn) = (((r as isize) + rd) as usize, ((c as isize) + cd) as usize);
-//                let atn = &map[rn][cn];
-//                if *atn == '#' || !visited.insert((rn, cn)) {
-//                    continue;
-//                }
-//                let mut path = path.clone();
-//                if (rd, cd) != (0, 0) {
-//                    path.push(dir2but[&(rd, cd)]);
-//                }
-//                if atn == it {
-//                    res.push(path);
-//                    pos = (rn, cn);
-//                    break 'outer;
-//                } else {
-//                    todo.push_back(((rn, cn), path));
-//                }
-//            }
-//        }
-//    }
-//    return res;
-//}
-//
-//fn get_permutations(one_permut: Vec<Vec<char>>) -> Vec<Vec<char>> {
-//    let sub_permuts = one_permut
-//        .iter()
-//        .map(|cs| {
-//            cs.iter()
-//                .cloned()
-//                .permutations(cs.len())
-//                .collect::<HashSet<Vec<char>>>()
-//        })
-//        .collect::<Vec<_>>();
-//    let permuts = sub_permuts
-//        .iter()
-//        .multi_cartesian_product()
-//        .collect::<Vec<_>>();
-//    let mut res = Vec::new();
-//    for permut in permuts {
-//        let mut rp = Vec::new();
-//        for sp in permut {
-//            rp.extend(sp);
-//            rp.push('A');
-//        }
-//        res.push(rp);
-//    }
-//    return res;
-//}

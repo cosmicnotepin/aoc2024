@@ -20,6 +20,7 @@ fn to_map(map_s: &str) -> (Vec<Vec<char>>, HashMap<char, (usize, usize)>) {
     }
     return (map, to_coords);
 }
+
 #[allow(dead_code)]
 fn get_paths2(
     pos_start: &(usize, usize),
@@ -296,12 +297,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+#[allow(dead_code)]
 fn ppss(sequences: &Vec<Vec<char>>) {
     for sequence in sequences {
         pps(sequence);
     }
 }
 
+#[allow(dead_code)]
 fn pps(sequence: &Vec<char>) {
     println!("{}", sequence.iter().collect::<String>());
 }

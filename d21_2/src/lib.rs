@@ -103,9 +103,13 @@ fn min_exp_size(
     to_coords_num: &HashMap<char, (usize, usize)>,
     map_dir: &Vec<Vec<char>>,
     to_coords_dir: &HashMap<char, (usize, usize)>,
+    cache: &mut HashMap<(Vec<char>, usize), usize>,
 ) -> usize {
     if exps == max_exps {
         return seq.len();
+    }
+    if let Some(size) = cache.get(&(seq.clone(), exps)) {
+        return *size;
     }
     let paths: Vec<Vec<Vec<char>>>;
     if exps == 0 {
@@ -127,11 +131,13 @@ fn min_exp_size(
                     to_coords_num,
                     map_dir,
                     to_coords_dir,
+                    cache,
                 ),
             );
         }
         res += best_alt;
     }
+    cache.insert((seq.clone(), exps), res);
     return res;
 }
 
@@ -151,6 +157,7 @@ fn part1(input: String) -> usize {
     let (num_keypad, to_coords_num) = to_map(num_keypad_s);
     let (dir_keypad, to_coords_dir) = to_map(dir_keypad_s);
     let mut res = 0;
+    let mut cache: HashMap<(Vec<char>, usize), usize> = HashMap::new();
     for code in input.lines() {
         let seqn = code.chars().collect::<Vec<_>>();
         let r1 = min_exp_size(
@@ -161,6 +168,7 @@ fn part1(input: String) -> usize {
             &to_coords_num,
             &dir_keypad,
             &to_coords_dir,
+            &mut cache,
         );
         println!("r1 : {:?}", r1);
         res += r1 * code[..code.len() - 1].parse::<usize>().unwrap();
@@ -168,8 +176,39 @@ fn part1(input: String) -> usize {
     return res;
 }
 
-fn part2(input: String) -> i32 {
-    return input.len().try_into().unwrap();
+fn part2(input: String) -> usize {
+    let num_keypad_s = "\
+#####
+#789#
+#456#
+#123#
+##0A#
+#####";
+    let dir_keypad_s = "\
+#####
+##^A#
+#<v>#
+#####";
+    let (num_keypad, to_coords_num) = to_map(num_keypad_s);
+    let (dir_keypad, to_coords_dir) = to_map(dir_keypad_s);
+    let mut res = 0;
+    let mut cache: HashMap<(Vec<char>, usize), usize> = HashMap::new();
+    for code in input.lines() {
+        let seqn = code.chars().collect::<Vec<_>>();
+        let r1 = min_exp_size(
+            &seqn,
+            0,
+            26,
+            &num_keypad,
+            &to_coords_num,
+            &dir_keypad,
+            &to_coords_dir,
+            &mut cache,
+        );
+        println!("r1 : {:?}", r1);
+        res += r1 * code[..code.len() - 1].parse::<usize>().unwrap();
+    }
+    return res;
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {

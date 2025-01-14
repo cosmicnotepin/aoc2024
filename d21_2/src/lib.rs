@@ -35,43 +35,33 @@ fn get_paths(
     if map[pos_start.0][pos_start.1] == *target {
         return (pos_start.clone(), vec![vec!['A']]);
     }
-    let dir2but = HashMap::from([
-        ((0, 0), '_'),
-        ((-1, 0), '^'),
-        ((0, 1), '>'),
-        ((1, 0), 'v'),
-        ((0, -1), '<'),
-        ((-1, -1), 'A'),
-    ]);
+    let dir2but = HashMap::from([((-1, 0), '^'), ((0, 1), '>'), ((1, 0), 'v'), ((0, -1), '<')]);
     let mut pos = *pos_start;
     let mut todo = VecDeque::new();
     todo.push_back((vec![pos], vec![]));
-    let mut cur_min = usize::MAX;
+    let mut min_path_len = usize::MAX;
     let mut subseq = Vec::new();
     'outer: while todo.len() > 0 {
         let (visited, path) = todo.pop_front().unwrap();
         let (r, c) = visited[visited.len() - 1];
-        let dirs = vec![(-1, 0), (0, 1), (1, 0), (0, -1)];
-        for (rd, cd) in dirs {
+        for (rd, cd) in dir2but.keys() {
             let (rn, cn) = (((r as isize) + rd) as usize, ((c as isize) + cd) as usize);
             let atn = &map[rn][cn];
-            if *atn == '#'
-                || (visited.len() > 1 && visited[..visited.len() - 1].contains(&(rn, cn)))
-            {
+            if *atn == '#' || visited.contains(&(rn, cn)) {
                 continue;
             }
             let mut path = path.clone();
             let mut visited = visited.clone();
-            path.push(dir2but[&(rd, cd)]);
+            path.push(dir2but[&(*rd, *cd)]);
             visited.push((rn, cn));
             if atn == target {
-                cur_min = cmp::min(cur_min, path.len());
+                min_path_len = path.len();
                 path.push('A');
                 subseq.push(path);
                 pos = (rn, cn);
                 continue 'outer;
             } else {
-                if path.len() + 1 < cur_min {
+                if path.len() + 1 < min_path_len {
                     todo.push_back((visited, path));
                 }
             }

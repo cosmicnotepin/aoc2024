@@ -71,6 +71,7 @@ fn part2(input: String) -> i32 {
         ("z34", "wrc"),
         ("wrc", "z34"),
     ]);
+    //ddn,kqh,nhs,nnf,wrc,z09,z20,z34
     //let swaps: HashMap<&str, &str> = HashMap::new();
     for gate_s in gates_s.lines() {
         let mut v: Vec<&str> = gate_s.split(' ').collect();

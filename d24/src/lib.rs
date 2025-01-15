@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::collections::{HashMap, VecDeque};
 use std::error::Error;
 use std::fs;
@@ -53,42 +52,107 @@ fn part2(input: String) -> i32 {
         let (id_s, val_s) = wire_s.split_once(": ").unwrap();
         wires.insert(id_s, val_s.parse::<usize>().unwrap());
     }
-    let mut todo = VecDeque::new();
-    let mut outputs = Vec::new();
+    let mut todo = Vec::new();
+    let mut graph_s = String::from("digraph {\n");
+    let mut edges_s = String::from("");
+    let mut xs = Vec::new();
+    let mut ys = Vec::new();
+    let mut zs = Vec::new();
+    let mut ands = Vec::new();
+    let mut ors = Vec::new();
+    let mut xors = Vec::new();
+    let swaps = HashMap::from([
+        ("nnf", "z09"),
+        ("z09", "nnf"),
+        ("nhs", "z20"),
+        ("z20", "nhs"),
+        ("kqh", "ddn"),
+        ("ddn", "kqh"),
+        ("z34", "wrc"),
+        ("wrc", "z34"),
+    ]);
+    //let swaps: HashMap<&str, &str> = HashMap::new();
     for gate_s in gates_s.lines() {
-        let v: Vec<&str> = gate_s.split(' ').collect();
-        outputs.push(v[v.len() - 1]);
-        todo.push_back(v);
+        let mut v: Vec<&str> = gate_s.split(' ').collect();
+        if swaps.contains_key(v[4]) {
+            v[4] = swaps[v[4]];
+        }
+        todo.push(v);
     }
-    println!("outputs: {:?}", outputs);
-    let blah = outputs
-        .iter()
-        .tuple_combinations()
-        .collect::<Vec<(_, _, _, _, _, _, _, _)>>();
-    //let blah = blah
-    //    .iter().map(|cb| cb.combinations(2)
-    //    .tuple_combinations()
-    //    //.filter(|((a, b), (c, d), (e, f), (g, h))| **h == "z00")
-    //    .collect::<Vec<(_, _, _, _)>>();
-    //println!("blah : {:?}", blah);
-    println!("blah.len() : {:?}", blah.len());
-    while todo.len() > 0 {
-        let cur = todo.pop_front().unwrap();
-        if let Some(in1) = wires.get(cur[0]) {
-            if let Some(in2) = wires.get(cur[2]) {
-                let res = match cur[1] {
-                    "AND" => in1 & in2,
-                    "OR" => in1 | in2,
-                    "XOR" => in1 ^ in2,
-                    _default => panic!(),
-                };
-                wires.insert(cur[4], res);
-                continue;
+    todo.sort_by_key(|el| el[4]);
+    todo.reverse();
+    for v in todo {
+        for n in [v[0], v[2], v[4]] {
+            match n.chars().next().unwrap() {
+                'z' => zs.push(n),
+                'x' => {
+                    if !xs.contains(&n) {
+                        xs.push(n);
+                    }
+                }
+                'y' => {
+                    if !ys.contains(&n) {
+                        ys.push(n);
+                    }
+                }
+                _other => (),
             }
         }
-        todo.push_back(cur);
+        for n in [v[4]] {
+            match n.chars().next().unwrap() {
+                'z' => (),
+                _other => match v[1] {
+                    "AND" => ands.push(n),
+                    "OR" => ors.push(n),
+                    "XOR" => xors.push(n),
+                    _other => panic!(),
+                },
+            }
+        }
+        edges_s += &format!("{} -> {}\n", v[0], v[4]);
+        edges_s += &format!("{} -> {}\n", v[2], v[4]);
     }
-    return 0;
+    xs.sort();
+    ys.sort();
+    zs.sort();
+
+    //for sgn in [&xs, &ys, &zs] {
+    //    for n in sgn {
+    //        graph_s += &format!("{}\n", n);
+    //    }
+    //}
+    graph_s += &edges_s;
+    for sgn in [ors, ands, xors] {
+        graph_s += "subgraph {\n  rank = same;";
+        for n in sgn {
+            graph_s += &format!(" {};", n);
+        }
+        graph_s += "\n}\n";
+    }
+    graph_s += "subgraph {\n  rank = same;\n";
+    for (x, y) in xs.iter().zip(ys) {
+        graph_s += &format!("{}->{}->", x, y);
+    }
+    graph_s.pop();
+    graph_s.pop();
+    graph_s += ";\n";
+    graph_s += "rankdir=LR;\n";
+    graph_s += "}\n";
+
+    for sgn in [zs] {
+        graph_s += "subgraph {\n  rank = same;\n";
+        for n in sgn {
+            graph_s += &format!("{}->", n);
+        }
+        graph_s.pop();
+        graph_s.pop();
+        graph_s += ";\n";
+        graph_s += "rankdir=LR;\n";
+        graph_s += "}\n";
+    }
+    graph_s += "}";
+    let _ = fs::write("graph", graph_s);
+    return input.len().try_into().unwrap();
 }
 
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -212,47 +276,41 @@ x05 AND y05 -> z00"
 //        let (id_s, val_s) = wire_s.split_once(": ").unwrap();
 //        wires.insert(id_s, val_s.parse::<usize>().unwrap());
 //    }
-//    let mut todo = Vec::new();
-//    let mut graph_s = String::from("digraph {\n");
-//    let mut edges_s = String::from("");
-//    let mut xs = Vec::new();
-//    let mut ys = Vec::new();
-//    let mut zs = Vec::new();
-//    let mut os = Vec::new();
+//    let mut todo = VecDeque::new();
+//    let mut outputs = Vec::new();
 //    for gate_s in gates_s.lines() {
 //        let v: Vec<&str> = gate_s.split(' ').collect();
-//        todo.push(v);
+//        outputs.push(v[v.len() - 1]);
+//        todo.push_back(v);
 //    }
-//    todo.sort_by_key(|el| el[4]);
-//    todo.reverse();
-//    println!("todo: {:?}", todo);
-//    for v in todo {
-//        for n in [v[0], v[2], v[4]] {
-//            match n.chars().next().unwrap() {
-//                'z' => zs.push(n),
-//                'x' => xs.push(n),
-//                'y' => ys.push(n),
-//                _other => os.push(n),
+//    println!("outputs: {:?}", outputs);
+//    let blah = outputs
+//        .iter()
+//        .tuple_combinations()
+//        .collect::<Vec<(_, _, _, _, _, _, _, _)>>();
+//    //let blah = blah
+//    //    .iter().map(|cb| cb.combinations(2)
+//    //    .tuple_combinations()
+//    //    //.filter(|((a, b), (c, d), (e, f), (g, h))| **h == "z00")
+//    //    .collect::<Vec<(_, _, _, _)>>();
+//    //println!("blah : {:?}", blah);
+//    println!("blah.len() : {:?}", blah.len());
+//    while todo.len() > 0 {
+//        let cur = todo.pop_front().unwrap();
+//        if let Some(in1) = wires.get(cur[0]) {
+//            if let Some(in2) = wires.get(cur[2]) {
+//                let res = match cur[1] {
+//                    "AND" => in1 & in2,
+//                    "OR" => in1 | in2,
+//                    "XOR" => in1 ^ in2,
+//                    _default => panic!(),
+//                };
+//                wires.insert(cur[4], res);
+//                continue;
 //            }
 //        }
-//        edges_s += &format!("{} -> {}\n", v[0], v[4]);
-//        edges_s += &format!("{} -> {}\n", v[2], v[4]);
+//        todo.push_back(cur);
 //    }
-//    for sgn in [&xs, &ys, &zs] {
-//        for n in sgn {
-//            graph_s += &format!("{}\n", n);
-//        }
-//    }
-//    graph_s += &edges_s;
-//    for sgn in [xs, ys, zs, os] {
-//        graph_s += "subgraph {\n  rank = same;";
-//        for n in sgn {
-//            graph_s += &format!(" {};", n);
-//        }
-//        graph_s += "\n}\n";
-//    }
-//    graph_s += "}";
-//    println!("graph_s : {:?}", graph_s);
-//    fs::write("graph", graph_s);
-//    return input.len().try_into().unwrap();
+//    return 0;
 //}
+//

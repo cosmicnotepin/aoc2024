@@ -1,230 +1,4 @@
 digraph {
-x09
-x00
-x35
-x22
-x16
-x43
-x37
-x03
-x31
-x34
-x07
-x42
-x02
-x27
-x39
-x41
-x36
-x19
-x11
-x44
-x40
-x20
-x21
-x16
-x15
-x25
-x29
-x14
-x12
-x03
-x08
-x41
-x17
-x24
-x10
-x21
-x12
-x13
-x01
-x43
-x27
-x33
-x17
-x33
-x31
-x11
-x04
-x30
-x06
-x18
-x42
-x06
-x02
-x14
-x37
-x36
-x01
-x05
-x08
-x22
-x10
-x25
-x20
-x38
-x09
-x18
-x26
-x00
-x32
-x38
-x28
-x29
-x30
-x32
-x07
-x28
-x26
-x23
-x23
-x35
-x04
-x05
-x44
-x40
-x24
-x15
-x39
-x34
-x19
-x13
-y09
-y00
-y35
-y22
-y16
-y43
-y37
-y03
-y31
-y34
-y07
-y42
-y02
-y27
-y39
-y41
-y36
-y19
-y11
-y44
-y40
-y20
-y21
-y16
-y15
-y25
-y29
-y14
-y12
-y03
-y08
-y41
-y17
-y24
-y10
-y21
-y12
-y13
-y01
-y43
-y27
-y33
-y17
-y33
-y31
-y11
-y04
-y30
-y06
-y18
-y42
-y06
-y02
-y14
-y37
-y36
-y01
-y05
-y08
-y22
-y10
-y25
-y20
-y38
-y09
-y18
-y26
-y00
-y32
-y38
-y28
-y29
-y30
-y32
-y07
-y28
-y26
-y23
-y23
-y35
-y04
-y05
-y44
-y40
-y24
-y15
-y39
-y34
-y19
-y13
-z45
-z44
-z43
-z42
-z41
-z40
-z39
-z38
-z37
-z36
-z35
-z34
-z33
-z32
-z31
-z30
-z29
-z28
-z27
-z26
-z25
-z24
-z23
-z22
-z21
-z20
-z19
-z18
-z17
-z16
-z15
-z14
-z13
-z12
-z11
-z10
-z09
-z08
-z07
-z06
-z05
-z04
-z03
-z02
-z01
-z00
 cdh -> z45
 rqv -> z45
 kkt -> z44
@@ -247,8 +21,8 @@ scb -> z36
 dnp -> z36
 pfk -> z35
 cmd -> z35
-bmh -> z34
 spk -> z34
+bmh -> z34
 sdt -> z33
 ngc -> z33
 fnk -> z32
@@ -275,8 +49,8 @@ wnq -> z22
 vss -> z22
 nhs -> z21
 qvh -> z21
-cdk -> z20
-rmn -> z20
+gqh -> z20
+tcv -> z20
 bjm -> z19
 vkt -> z19
 wjt -> z18
@@ -297,8 +71,8 @@ rtw -> z11
 wpq -> z11
 hvg -> z10
 gtg -> z10
-y09 -> z09
-x09 -> z09
+kgr -> z09
+fvp -> z09
 nqg -> z08
 hbn -> z08
 cwn -> z07
@@ -325,8 +99,8 @@ bjm -> wtr
 vkt -> wtr
 y35 -> wtc
 x35 -> wtc
-spk -> wrc
 bmh -> wrc
+spk -> wrc
 nqg -> wqc
 hbn -> wqc
 pjj -> wpq
@@ -465,12 +239,12 @@ tcb -> nqg
 fgg -> nqg
 ptt -> nnw
 bvn -> nnw
-kgr -> nnf
-fvp -> nnf
+y09 -> nnf
+x09 -> nnf
 x01 -> nmk
 y01 -> nmk
-gqh -> nhs
-tcv -> nhs
+cdk -> nhs
+rmn -> nhs
 y43 -> nhq
 x43 -> nhq
 x27 -> nhh
@@ -501,8 +275,8 @@ jtf -> ktj
 jdk -> ktj
 x04 -> krm
 y04 -> krm
-x30 -> kqh
 y30 -> kqh
+x30 -> kqh
 hpm -> kkt
 nhq -> kkt
 wqc -> kgr
@@ -615,8 +389,8 @@ hsp -> dds
 qnp -> dds
 dds -> ddr
 btb -> ddr
-y30 -> ddn
 x30 -> ddn
+y30 -> ddn
 cnv -> ddh
 jsj -> ddh
 tbp -> dcd
@@ -670,15 +444,22 @@ x13 -> bfw
 dpm -> bfc
 pqq -> bfc
 subgraph {
-  rank = same; x09; x00; x35; x22; x16; x43; x37; x03; x31; x34; x07; x42; x02; x27; x39; x41; x36; x19; x11; x44; x40; x20; x21; x16; x15; x25; x29; x14; x12; x03; x08; x41; x17; x24; x10; x21; x12; x13; x01; x43; x27; x33; x17; x33; x31; x11; x04; x30; x06; x18; x42; x06; x02; x14; x37; x36; x01; x05; x08; x22; x10; x25; x20; x38; x09; x18; x26; x00; x32; x38; x28; x29; x30; x32; x07; x28; x26; x23; x23; x35; x04; x05; x44; x40; x24; x15; x39; x34; x19; x13;
+  rank = same; wpq; wjt; vss; vnw; vnn; vkt; vdc; tpv; tcv; srq; spk; skd; sdt; sdh; rvb; pmt; pjt; pfk; nqg; nnw; nhs; mtq; mmr; mkh; ktj; kkt; kgr; kbj; jsj; jmc; hvg; hsp; hjp; fqk; fnk; fmn; fch; dnp; ddr; dcd; cfd; cdm; bfc;
 }
 subgraph {
-  rank = same; y09; y00; y35; y22; y16; y43; y37; y03; y31; y34; y07; y42; y02; y27; y39; y41; y36; y19; y11; y44; y40; y20; y21; y16; y15; y25; y29; y14; y12; y03; y08; y41; y17; y24; y10; y21; y12; y13; y01; y43; y27; y33; y17; y33; y31; y11; y04; y30; y06; y18; y42; y06; y02; y14; y37; y36; y01; y05; y08; y22; y10; y25; y20; y38; y09; y18; y26; y00; y32; y38; y28; y29; y30; y32; y07; y28; y26; y23; y23; y35; y04; y05; y44; y40; y24; y15; y39; y34; y19; y13;
+  rank = same; wvn; wtv; wtr; wtc; wrc; wqc; vrk; vqk; vmf; vjd; vbr; tts; tjq; tgb; tcb; tbp; svv; snj; sms; rwr; rqv; rpm; rmn; rbk; qsd; qrt; qjf; qds; pvm; ptt; pqq; ppw; pjj; pht; nss; nqw; nnf; nhq; nbq; nbh; msm; mdv; mds; kwf; kgh; kdm; jtf; jsv; jqs; jmp; jhb; jdk; htr; hsc; hqh; hpm; hnj; hmt; hkt; hdc; gwt; gqt; gnv; gcn; fvd; fgv; fgg; fcg; dvb; dtt; dtk; dsr; dpq; dpm; dnw; dgj; ddt; dds; ddn; ddh; cqw; cnp; cmn; cjg; cdk; cdh; bvn; btb; bfw;
 }
 subgraph {
-  rank = same; z45; z44; z43; z42; z41; z40; z39; z38; z37; z36; z35; z34; z33; z32; z31; z30; z29; z28; z27; z26; z25; z24; z23; z22; z21; z20; z19; z18; z17; z16; z15; z14; z13; z12; z11; z10; z09; z08; z07; z06; z05; z04; z03; z02; z01; z00;
+  rank = same; wnq; wkn; wjf; vnh; vng; tvs; ssq; sdr; scb; rtw; qvh; qnp; qnd; qkk; qjh; ppp; nsg; nsd; nmk; nhh; ngc; mhm; krm; kqh; kbv; jpp; hbn; gtg; gqh; fvp; ftt; dmh; cwr; cwn; cqd; cpg; cnv; cmd; cgr; cbq; bwc; bss; bmh; bjm;
 }
 subgraph {
-  rank = same; cdh; rqv; kkt; cbq; wjf; dcd; kbv; bfc; srq; sdr; bwc; fqk; bss; fch; ktj; dmh; vnh; mtq; scb; dnp; pfk; cmd; bmh; spk; sdt; ngc; fnk; cwr; tvs; mkh; fmn; kqh; jmc; qkk; cfd; cqd; nhh; cdm; rvb; cpg; nnw; qnd; pjt; ppp; jsj; cnv; wnq; vss; nhs; qvh; cdk; rmn; bjm; vkt; wjt; ftt; hjp; mhm; ddr; wkn; hsp; qnp; vnn; qjh; kbj; nsd; sdh; nsg; rtw; wpq; hvg; gtg; nqg; hbn; cwn; pmt; jpp; tpv; mmr; cgr; krm; vdc; vng; vnw; skd; ssq; nmk; dsr; gtg; hvg; wvn; rvb; cpg; wtv; bjm; vkt; wtr; wtc; spk; bmh; wrc; nqg; hbn; wqc; pjj; wvn; wpq; wnq; wkn; ppw; jqs; wjt; wjf; nss; vjd; vss; mmr; cgr; vrk; jpp; tpv; vqk; jmp; nqw; vnw; hdc; bfw; vnn; vnh; vng; nhh; cdm; vmf; htr; kdm; vkt; nhs; qvh; vjd; qds; fcg; vdc; fvp; kgr; vbr; tvs; bfc; kbv; tts; vrk; hmt; tpv; vss; wnq; tjq; tgb; wtr; rwr; tcv; tcb; tbp; krm; vdc; svv; ssq; fvd; rpm; srq; rbk; mdv; spk; snj; sms; hqh; qrt; skd; dnw; dtt; sdt; sdr; kwf; nbh; sdh; scb; rwr; gqt; gnv; rvb; rtw; rqv; rpm; rmn; ngc; sdt; rbk; qvh; qsd; nmk; dsr; qrt; qnp; qnd; qkk; qjh; qjf; qds; pvm; ppp; pjt; ptt; pqq; ppw; ppp; vqk; kgh; pmt; cnp; ddh; pjt; pjj; cfd; cqd; pht; wrc; tgb; pfk; nss; nsg; nsd; ssq; skd; nqw; tcb; fgg; nqg; ptt; bvn; nnw; kgr; fvp; nnf; nmk; gqh; tcv; nhs; nhq; nhh; ngc; nsg; sdh; nbq; rtw; wpq; nbh; hsc; dpq; mtq; ktj; dmh; msm; svv; cjg; mmr; dtk; ddn; mkh; mhm; mdv; mds; kwf; jtf; jdk; ktj; krm; kqh; hpm; nhq; kkt; wqc; pvm; kgr; kgh; kdm; kbv; nbq; qjf; kbj; mtq; vnh; jtf; ddr; wkn; jsv; tjq; gwt; jsj; hjp; mhm; jqs; jpp; jmp; pht; dgj; jmc; jhb; jdk; nnf; vbr; hvg; wjt; ftt; htr; jhb; fgv; hsp; hsc; hqh; wjf; dcd; hpm; qkk; jmc; hnj; hmt; bss; fch; hkt; jsv; qsd; hjp; kbj; nsd; hdc; hbn; gwt; gtg; gqt; gqh; qnd; nnw; gnv; gcn; fvp; bwc; fqk; fvd; ftt; hkt; sms; fqk; mds; cmn; fnk; hnj; ddt; fmn; vnn; qjh; fgv; cwn; pmt; fgg; msm; gcn; fch; vng; vnw; fcg; dvb; cwr; fnk; dtt; kqh; fmn; dtk; dsr; scb; dnp; dpq; srq; sdr; dpm; dnw; cqw; wtc; dnp; dmh; dgj; ddt; hsp; qnp; dds; dds; btb; ddr; ddn; cnv; jsj; ddh; tbp; tts; dcd; cwr; cwn; cmd; pfk; cqw; cqd; cpg; cnv; cnp; mkh; tvs; cmn; cmd; cjg; cgr; vmf; snj; cfd; dvb; wtv; cdm; tcv; gqh; cdk; cbq; kkt; cdh; cbq; bwc; bvn; btb; bss; bmh; bjm; bfw; dpm; pqq; bfc;
+  rank = same;
+x00->y00->x01->y01->x02->y02->x03->y03->x04->y04->x05->y05->x06->y06->x07->y07->x08->y08->x09->y09->x10->y10->x11->y11->x12->y12->x13->y13->x14->y14->x15->y15->x16->y16->x17->y17->x18->y18->x19->y19->x20->y20->x21->y21->x22->y22->x23->y23->x24->y24->x25->y25->x26->y26->x27->y27->x28->y28->x29->y29->x30->y30->x31->y31->x32->y32->x33->y33->x34->y34->x35->y35->x36->y36->x37->y37->x38->y38->x39->y39->x40->y40->x41->y41->x42->y42->x43->y43->x44->y44;
+rankdir=LR;
+}
+subgraph {
+  rank = same;
+z00->z01->z02->z03->z04->z05->z06->z07->z08->z09->z10->z11->z12->z13->z14->z15->z16->z17->z18->z19->z20->z21->z22->z23->z24->z25->z26->z27->z28->z29->z30->z31->z32->z33->z34->z35->z36->z37->z38->z39->z40->z41->z42->z43->z44->z45;
+rankdir=LR;
 }
 }
